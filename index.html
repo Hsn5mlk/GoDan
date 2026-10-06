@@ -43,7 +43,6 @@ body {
     background-size: cover; background-position: center; background-repeat: no-repeat;
     opacity: 0;
     transition: opacity 1.5s ease-in-out;
-    /* ✅ بدون شفافية */
 }
 .bg-slide.active { opacity: 1; }
 .bg-overlay {
@@ -220,6 +219,28 @@ body {
     display: flex; align-items: center; justify-content: center;
     border: 2px solid var(--bg-dark);
 }
+.wall-bell-inline {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(155,89,182,.95);
+    border: 2px solid #fff;
+    color: #fff;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 6;
+    transition: all .2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,.6);
+    padding: 0;
+}
+.wall-bell-inline:hover { transform: scale(1.2); }
+.wall-bell-inline.muted { background: rgba(80,80,80,.9); }
 .mini-rect.rooms {
     border-color: var(--blue); color: var(--blue);
     background: linear-gradient(135deg, rgba(52,152,219,.25), rgba(155,89,182,.15));
@@ -421,7 +442,7 @@ body {
 .modal-close:hover { background: var(--red); color: #fff; transform: rotate(90deg); }
 .modal-body { padding: 16px 20px 30px; flex: 1; overflow-y: auto; }
 
-/* ============ HISTORY & RANKING ============ */
+/* ============ HISTORY ============ */
 .history-item { background: rgba(255,255,255,.04); border: 1.5px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
 .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 11px; color: var(--text3); flex-wrap: wrap; gap: 6px; }
 .history-date { display: flex; align-items: center; gap: 4px; }
@@ -438,15 +459,62 @@ body {
 .history-score { font-size: 20px; font-weight: 900; color: var(--text); min-width: 70px; text-align: center; font-family: 'Courier New', monospace; }
 .history-score .winner-score { color: var(--green); text-shadow: 0 0 10px rgba(46,204,113,.6); }
 
-.rank-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 12px;
-    background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    border-radius: 16px; margin-bottom: 10px;
-    border: 1.5px solid var(--border);
+/* ============ RANKING PODIUM ============ */
+.ranking-podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    direction: ltr;
 }
-.rank-position { font-size: 20px; font-weight: 900; min-width: 40px; text-align: center; color: var(--text2); }
-.rank-avatar-wrap { position: relative; flex-shrink: 0; padding: 5px; border-radius: 50%; }
+.podium-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform .2s;
+    flex: 1;
+    max-width: 120px;
+}
+.podium-item:hover { transform: translateY(-5px); }
+.podium-item .rank-avatar-wrap { position: relative; padding: 5px; border-radius: 50%; flex-shrink: 0; }
+.podium-item .rank-avatar {
+    width: 60px; height: 60px;
+    border-radius: 50%; overflow: hidden;
+    background: var(--grad-royal);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 24px; color: #fff;
+    border: 2px solid var(--bg-dark);
+    position: relative; z-index: 2;
+}
+.podium-item .rank-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.podium-item .rank-crown {
+    position: absolute; top: -14px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 26px;
+    filter: drop-shadow(0 0 10px rgba(255,215,0,.9));
+    z-index: 3;
+}
+.podium-item .podium-name {
+    font-size: 11px; font-weight: 800; color: var(--text);
+    text-align: center; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    max-width: 110px;
+}
+.podium-item .podium-wins {
+    font-size: 11px; font-weight: 900; color: var(--gold);
+    background: rgba(255,215,0,.15);
+    padding: 2px 10px; border-radius: 10px;
+    border: 1px solid rgba(255,215,0,.3);
+}
+.podium-place { font-size: 16px; font-weight: 900; min-width: 30px; text-align: center; color: var(--text2); }
+.podium-2 { order: 1; }
+.podium-1 { order: 2; margin-bottom: 10px; }
+.podium-3 { order: 3; }
+
 .rank-avatar-wrap.frame-diamond { background: conic-gradient(from 0deg, #b9f2ff, #ffffff, #b9f2ff, #4fc3f7, #b9f2ff); box-shadow: 0 0 30px rgba(185,242,255,.9); animation: diamondRotate 4s linear infinite; }
 @keyframes diamondRotate { to { filter: hue-rotate(360deg); } }
 .rank-avatar-wrap.frame-gold { background: conic-gradient(from 0deg, #ffd700, #ffed4e, #f39c12, #ffd700); box-shadow: 0 0 30px rgba(255,215,0,.9); }
@@ -458,6 +526,19 @@ body {
 .rank-avatar-wrap.frame-purple { background: conic-gradient(from 0deg, #9b59b6, #bb8fce, #8e44ad, #9b59b6); box-shadow: 0 0 15px rgba(155,89,182,.5); }
 .rank-avatar-wrap.frame-red { background: conic-gradient(from 0deg, #e74c3c, #ec7063, #c0392b, #e74c3c); box-shadow: 0 0 15px rgba(231,76,60,.5); }
 .rank-avatar-wrap.frame-default { background: rgba(255,255,255,.1); border: 1.5px solid var(--border2); }
+
+.rank-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 12px;
+    background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    border-radius: 16px; margin-bottom: 10px;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: all .2s;
+}
+.rank-item:hover { border-color: var(--gold); transform: translateX(-3px); }
+.rank-position { font-size: 20px; font-weight: 900; min-width: 40px; text-align: center; color: var(--text2); }
+.rank-avatar-wrap { position: relative; flex-shrink: 0; padding: 5px; border-radius: 50%; }
 .rank-avatar { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: var(--grad-royal); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: #fff; border: 2px solid var(--bg-dark); position: relative; z-index: 2; }
 .rank-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .rank-crown { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 22px; filter: drop-shadow(0 0 10px rgba(255,215,0,.9)); z-index: 3; }
@@ -469,7 +550,7 @@ body {
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
 .empty-state i { font-size: 48px; color: var(--text3); margin-bottom: 12px; display: block; }
 
-/* ============ PROFILE MODAL (كامل من شات دان) ============ */
+/* ============ PROFILE MODAL ============ */
 .my-profile-modal {
     position: fixed; inset: 0; background: rgba(0,0,0,.9);
     z-index: 3000; display: none; align-items: center; justify-content: center;
@@ -516,6 +597,7 @@ body {
     margin: 10px 0; padding: 10px 14px;
     background: rgba(255,255,255,.03);
     border-radius: 8px; min-height: 40px; line-height: 1.5;
+    white-space: pre-line;
 }
 .my-profile-tabs {
     display: flex; gap: 4px;
@@ -592,32 +674,250 @@ body {
 }
 .form-group input:focus, .form-group textarea:focus { border-color: var(--gold); }
 
-/* Animated fonts */
-.animated-font { display:inline-block; background:linear-gradient(90deg, #ff6b35, #ffd700, #ff2e63, #9b59b6, #ff6b35); background-size:300% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: fontFlow 3s linear infinite; font-weight:800; }
+/* ============ BACKGROUND MANAGER ============ */
+.bg-manager-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 10px 0;
+}
+.bg-manager-item {
+    position: relative;
+    aspect-ratio: 16/9;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid rgba(52,152,219,.4);
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0,0,0,.3);
+}
+.bg-manager-item .bg-del-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(231,76,60,.9);
+    border: 1.5px solid #fff;
+    color: #fff;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+}
+.bg-manager-item .bg-del-btn:hover { background: var(--red); transform: scale(1.15); }
+.bg-manager-item .bg-active-badge {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    background: rgba(46,204,113,.9);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1px solid #fff;
+}
+
+/* ============ MUSIC MANAGER ============ */
+.music-manager-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 10px 0;
+}
+.music-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,.04);
+    border: 1.5px solid rgba(155,89,182,.3);
+    border-radius: 12px;
+    position: relative;
+}
+.music-item.playing {
+    border-color: var(--green);
+    background: linear-gradient(135deg, rgba(46,204,113,.15), rgba(46,204,113,.05));
+    box-shadow: 0 0 15px rgba(46,204,113,.4);
+}
+.music-item .music-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), #8e44ad);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #fff;
+    flex-shrink: 0;
+}
+.music-item.playing .music-icon {
+    background: linear-gradient(135deg, var(--green), #27ae60);
+    animation: musicPulse 1.5s ease-in-out infinite;
+}
+@keyframes musicPulse {
+    0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(46,204,113,.7); }
+    50% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(46,204,113,0); }
+}
+.music-item .music-info {
+    flex: 1;
+    min-width: 0;
+}
+.music-item .music-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+.music-item .music-url {
+    font-size: 9px;
+    color: var(--text3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    direction: ltr;
+    text-align: right;
+}
+.music-item .music-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+.music-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #fff;
+    transition: all .2s;
+}
+.music-btn.play { background: linear-gradient(135deg, var(--green), #27ae60); }
+.music-btn.stop { background: linear-gradient(135deg, var(--orange), #e74c3c); }
+.music-btn.del { background: rgba(231,76,60,.7); }
+.music-btn:hover { transform: scale(1.12); }
+.music-btn.play.active { box-shadow: 0 0 15px var(--green); animation: musicPulse 1.5s infinite; }
+
+/* ============ ROYAL AD ============ */
+.royal-ad-banner { position: relative; margin: 0 auto; padding: 20px; width: 100%; max-width: 95%; background: linear-gradient(135deg, #1a0b2e, #2d1b4e, #1a0b2e); border: 3px solid var(--gold); border-radius: 20px; box-shadow: 0 0 40px rgba(255,215,0,.5); overflow: hidden; animation: royalAdIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes royalAdIn { 0% { transform: scale(0.5) rotate(-5deg); opacity: 0; } 60% { transform: scale(1.05) rotate(2deg); opacity: 1; } 100% { transform: scale(1) rotate(0); } }
+.royal-ad-banner::before { content: ''; position: absolute; inset: -50%; background: conic-gradient(from 0deg, transparent, rgba(255,215,0,.3), transparent, rgba(255,46,99,.2), transparent); animation: royalAdRotate 8s linear infinite; pointer-events: none; }
+@keyframes royalAdRotate { 100% { transform: rotate(360deg); } }
+.royal-ad-content { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 12px; }
+.royal-ad-header { display: flex; align-items: center; gap: 12px; }
+.royal-ad-crown { font-size: 36px; animation: royalAdCrown 2s ease-in-out infinite; filter: drop-shadow(0 0 10px rgba(255,215,0,.8)); }
+@keyframes royalAdCrown { 0%,100% { transform: translateY(0) rotate(-8deg) scale(1); } 50% { transform: translateY(-6px) rotate(8deg) scale(1.1); } }
+.royal-ad-title { font-size: 18px; font-weight: 900; background: linear-gradient(90deg, #ffd700, #fff, #ffd700); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fontFlow 2s linear infinite; letter-spacing: 1px; }
 @keyframes fontFlow { 0%{background-position:0% center;} 100%{background-position:300% center;} }
-.animated-font-2 { display:inline-block; color:#fff; animation: fontPulse 1.5s ease-in-out infinite; font-weight:800; text-shadow:0 0 10px currentColor; }
-@keyframes fontPulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.05);opacity:.85;} }
-.animated-font-3 { display:inline-block; background:linear-gradient(90deg, #ffd700, #ff6b35, #ffd700); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: fontFlow 1.5s linear infinite; font-weight:900; letter-spacing:1px; }
-.animated-font-4 { display:inline-block; color:#fff; text-shadow:0 0 5px #ff2e63, 0 0 10px #ff2e63, 0 0 15px #ff2e63; animation: neonGlow 2s infinite; font-weight:800; }
-@keyframes neonGlow { 0%,100% { text-shadow:0 0 5px #ff2e63, 0 0 10px #ff2e63; } 50% { text-shadow:0 0 10px #ff2e63, 0 0 20px #ff2e63, 0 0 30px #ff2e63; } }
-.animated-font-5 { display:inline-block; color:#ffd700; animation: bounceText 1s ease infinite; font-weight:800; }
-@keyframes bounceText { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
-.animated-font-6 { display:inline-block; background:linear-gradient(45deg, #ff6b35, #ffd700, #2ecc71, #3498db, #9b59b6, #ff2e63); background-size:400% 400%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: rainbowFlow 4s ease infinite; font-weight:800; }
-@keyframes rainbowFlow { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
-.animated-font-7 { display:inline-block; color:#fff; animation: shakeText 0.5s infinite; font-weight:800; }
-@keyframes shakeText { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-1px); } 75% { transform:translateX(1px); } }
-.animated-font-8 { display:inline-block; background:linear-gradient(90deg, #ff6b35, #ffd700, #ff6b35); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: fontFlow 2s linear infinite; font-weight:900; letter-spacing:2px; font-style:italic; }
-.animated-font-9 { display:inline-block; color:#2ecc71; text-shadow:0 0 8px #2ecc71; animation: breathe 2s ease-in-out infinite; font-weight:800; }
-@keyframes breathe { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.7; transform:scale(1.08); } }
-.animated-font-10 { display:inline-block; background:linear-gradient(135deg, #ffd700 0%, #fff 50%, #ffd700 100%); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: fontFlow 2.5s linear infinite; font-weight:900; }
-.animated-font-11 { display:inline-block; background:linear-gradient(90deg, #00c6ff, #0072ff, #00c6ff); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: fontFlow 2s linear infinite; font-weight:900; letter-spacing:1px; }
-.animated-font-12 { display:inline-block; color:#fff; animation: glowText 2s ease-in-out infinite; font-weight:800; }
-@keyframes glowText { 0%,100% { text-shadow:0 0 5px #ffd700, 0 0 10px #ffd700; } 50% { text-shadow:0 0 15px #ffd700, 0 0 30px #ffd700, 0 0 45px #ffd700; } }
-.animated-font-13 { display:inline-block; background:linear-gradient(45deg, #f093fb, #f5576c, #4facfe, #00f2fe); background-size:400% 400%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: gradientMove 3s ease infinite; font-weight:900; }
-@keyframes gradientMove { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
-.animated-font-14 { display:inline-block; color:#e74c3c; animation: wiggle 0.4s ease-in-out infinite; font-weight:800; }
-@keyframes wiggle { 0%,100% { transform:rotate(-2deg); } 50% { transform:rotate(2deg); } }
-.animated-font-15 { display:inline-block; background:linear-gradient(90deg, #ffffff, #00ff88, #ffffff); background-size:200% auto; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; animation: fontFlow 1.5s linear infinite; font-weight:900; letter-spacing:2px; }
+.royal-ad-subtitle { font-size: 11px; color: rgba(255,215,0,.8); font-weight: 700; }
+.royal-ad-image { width: 100%; max-height: 250px; object-fit: cover; border-radius: 14px; border: 2px solid rgba(255,215,0,.5); }
+.royal-ad-desc { font-size: 13px; color: #fff; line-height: 1.6; background: rgba(0,0,0,.4); padding: 12px 16px; border-radius: 12px; border-right: 4px solid var(--gold); }
+.royal-ad-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.royal-ad-btn { flex: 1; min-width: 120px; padding: 12px; border: none; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.royal-ad-btn-link { background: linear-gradient(135deg, #ffd700, #f39c12); color: #000; text-decoration: none; }
+.royal-ad-btn-ack { background: linear-gradient(135deg, #2ecc71, #27ae60); color: #fff; }
+.royal-ad-footer { font-size: 9px; color: rgba(255,215,0,.6); text-align: center; font-weight: 700; letter-spacing: 2px; }
+.royal-ad-badge { display: inline-block; padding: 3px 12px; background: linear-gradient(135deg, #ffd700, #ff6b35); color: #000; font-size: 9px; font-weight: 900; border-radius: 12px; letter-spacing: 1px; }
+.royal-msg-fullscreen { position: fixed; inset: 0; z-index: 1900; display: none; align-items: center; justify-content: center; padding: 15px; background: radial-gradient(circle at center, rgba(26,11,46,.95), rgba(0,0,0,.98)); overflow-y: auto; }
+.royal-msg-fullscreen.show { display: flex; }
+
+/* ============ ROYAL COMPOSER ============ */
+.royal-composer-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.92);
+    z-index: 5000; display: none; align-items: center; justify-content: center;
+    padding: 15px; overflow-y: auto;
+}
+.royal-composer-overlay.active { display: flex; }
+.royal-composer {
+    width: 100%; max-width: 460px; max-height: 92vh;
+    overflow-y: auto; background: rgba(20,18,30,.99);
+    border-radius: 22px; border: 2px solid var(--gold);
+    box-shadow: var(--shadow-gold), 0 0 80px rgba(255,46,99,.3);
+    position: relative;
+}
+.royal-composer-header {
+    padding: 16px 20px;
+    border-bottom: 1.5px solid rgba(255,215,0,.3);
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(135deg, rgba(255,215,0,.15), rgba(255,46,99,.1));
+    border-radius: 22px 22px 0 0;
+}
+.royal-composer-title {
+    font-size: 16px; font-weight: 900;
+    background: linear-gradient(90deg, #ffd700, #fff, #ffd700);
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fontFlow 2s linear infinite;
+    display: flex; align-items: center; gap: 8px;
+}
+.royal-composer-body { padding: 20px; }
+.royal-composer-body .form-group { margin-bottom: 14px; }
+.royal-composer-body label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--gold);
+    font-weight: 800; margin-bottom: 6px;
+}
+.royal-composer-body input,
+.royal-composer-body textarea {
+    width: 100%; padding: 12px 14px;
+    background: rgba(255,255,255,.05);
+    border: 1.5px solid rgba(255,215,0,.3);
+    border-radius: 12px; color: var(--text);
+    font-size: 13px; outline: none;
+    font-family: inherit;
+    transition: all .2s;
+}
+.royal-composer-body input:focus,
+.royal-composer-body textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(255,215,0,.15);
+}
+.royal-composer-body textarea {
+    resize: vertical; min-height: 90px; line-height: 1.5;
+}
+.royal-publish-btn {
+    width: 100%; padding: 15px; margin-top: 6px;
+    background: linear-gradient(135deg, #ffd700, #f39c12, #ff6b35);
+    background-size: 200% 200%;
+    border: 2px solid rgba(255,215,0,.8);
+    border-radius: 14px; color: #000;
+    font-size: 14px; font-weight: 900;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    box-shadow: 0 6px 25px rgba(255,215,0,.5);
+    animation: enterBtnFlow 3s ease infinite;
+    letter-spacing: 1px;
+    transition: transform .2s;
+}
+@keyframes enterBtnFlow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+.royal-publish-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,215,0,.7); }
+.royal-publish-btn:active { transform: scale(0.98); }
+.royal-preview-box {
+    margin-top: 10px; padding: 12px;
+    background: rgba(255,215,0,.08);
+    border: 1.5px dashed rgba(255,215,0,.4);
+    border-radius: 12px;
+    text-align: center;
+}
+.royal-preview-box img {
+    max-width: 100%; max-height: 150px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,215,0,.5);
+}
 
 /* ============ TOAST & NOTIF ============ */
 .toast {
@@ -658,48 +958,35 @@ body {
     .play-ring-btn::before { font-size: 22px; }
     .mini-rect { padding: 6px 10px; font-size: 10px; }
     .mini-rect i { font-size: 13px; }
+    .podium-item .rank-avatar { width: 50px; height: 50px; font-size: 20px; }
+    .podium-item .podium-name { font-size: 10px; max-width: 90px; }
 }
 </style>
 </head>
 <body>
 
-<!-- BACKGROUND -->
 <div class="bg-slideshow" id="bgSlideshow"></div>
 <div class="bg-overlay"></div>
 <div class="light-effect one"></div>
 <div class="light-effect two"></div>
 
-<!-- ==================== AUTH SCREEN ==================== -->
+<!-- AUTH SCREEN -->
 <div class="auth-screen" id="authScreen">
     <div class="auth-card">
         <div class="auth-crown">💍</div>
         <div class="auth-title">المحيبس - دان قلبي</div>
         <div class="auth-subtitle">سجّل دخولك لتبدأ اللعب</div>
-        
         <div class="auth-tabs">
             <button class="auth-tab active" data-auth="login">🔑 دخول</button>
             <button class="auth-tab" data-auth="register">✨ عضوية</button>
         </div>
-        
         <div class="auth-error" id="authError"></div>
-        
-        <!-- تسجيل الدخول -->
         <div class="auth-form active" id="loginForm">
-            <div class="auth-field">
-                <i class="bi bi-envelope-fill"></i>
-                <input type="email" class="auth-input" id="loginEmail" placeholder="البريد الإلكتروني">
-            </div>
-            <div class="auth-field">
-                <i class="bi bi-lock-fill"></i>
-                <input type="password" class="auth-input" id="loginPassword" placeholder="كلمة السر">
-            </div>
+            <div class="auth-field"><i class="bi bi-envelope-fill"></i><input type="email" class="auth-input" id="loginEmail" placeholder="البريد الإلكتروني"></div>
+            <div class="auth-field"><i class="bi bi-lock-fill"></i><input type="password" class="auth-input" id="loginPassword" placeholder="كلمة السر"></div>
             <button class="auth-submit" id="loginBtn">🔑 تسجيل الدخول</button>
-            <button class="auth-avatar-btn" id="forgotPasswordBtn" style="width:100%;margin-top:6px;font-size:10px;">
-                <i class="bi bi-key"></i> نسيت كلمة السر؟
-            </button>
+            <button class="auth-avatar-btn" id="forgotPasswordBtn" style="width:100%;margin-top:6px;font-size:10px;"><i class="bi bi-key"></i> نسيت كلمة السر؟</button>
         </div>
-        
-        <!-- العضوية -->
         <div class="auth-form" id="registerForm">
             <div class="auth-avatar-preview">
                 <img id="registerAvatarPreview" src="" onerror="this.style.background='linear-gradient(135deg,#ff6b35,#ff2e63)';this.src=''">
@@ -712,56 +999,46 @@ body {
                 </div>
                 <input type="file" id="avatarFileInput" accept="image/*" style="display:none;">
             </div>
-            <div class="auth-field">
-                <i class="bi bi-person-fill"></i>
-                <input type="text" class="auth-input" id="registerName" placeholder="الاسم">
-            </div>
-            <div class="auth-field">
-                <i class="bi bi-envelope-fill"></i>
-                <input type="email" class="auth-input" id="registerEmail" placeholder="البريد الإلكتروني">
-            </div>
-            <div class="auth-field">
-                <i class="bi bi-lock-fill"></i>
-                <input type="password" class="auth-input" id="registerPassword" placeholder="كلمة السر (6 أحرف على الأقل)">
-            </div>
+            <div class="auth-field"><i class="bi bi-person-fill"></i><input type="text" class="auth-input" id="registerName" placeholder="الاسم"></div>
+            <div class="auth-field"><i class="bi bi-envelope-fill"></i><input type="email" class="auth-input" id="registerEmail" placeholder="البريد الإلكتروني"></div>
+            <div class="auth-field"><i class="bi bi-lock-fill"></i><input type="password" class="auth-input" id="registerPassword" placeholder="كلمة السر (6 أحرف على الأقل)"></div>
             <button class="auth-submit" id="registerBtn">✨ إنشاء العضوية</button>
         </div>
     </div>
 </div>
 
-<!-- ==================== TOP BAR ==================== -->
+<!-- TOP BAR -->
 <div class="top-bar">
     <button class="mini-rect history" id="historyBtn" onclick="openHistoryModal()">
-        <i class="bi bi-clock-history"></i>
-        <span>السجل</span>
+        <i class="bi bi-clock-history"></i><span>السجل</span>
     </button>
     <div class="user-rank-group">
         <button class="mini-rect rank" id="rankBtn" onclick="openRankingModal()">
-            <i class="bi bi-trophy-fill"></i>
-            <span>الترتيب</span>
+            <i class="bi bi-trophy-fill"></i><span>الترتيب</span>
         </button>
         <div class="user-avatar" id="myAvatar" onclick="onAvatarClick()" title="ملفي الشخصي">?</div>
     </div>
 </div>
 
-<!-- ==================== BOTTOM BAR ==================== -->
+<!-- BOTTOM BAR -->
 <div class="bottom-bar">
     <button class="mini-rect wall" id="wallBtn" onclick="openWallModal()" style="position:relative;">
         <i class="bi bi-chat-square-text-fill"></i>
         <span>الجدار</span>
         <span class="wall-notif" id="wallNotif" style="display:none">0</span>
+        <span class="wall-bell-inline" id="wallBellInline" onclick="event.stopPropagation(); toggleWallNotifs()" title="إشعارات الجدار">
+            <i class="bi bi-bell-fill"></i>
+        </span>
     </button>
     <a class="play-ring-btn" id="playMainBtn" href="#" target="_blank">
-        <i class="bi bi-play-fill"></i>
-        <span>العب</span>
+        <i class="bi bi-play-fill"></i><span>العب</span>
     </a>
     <a class="mini-rect rooms" id="roomsBtn" href="#" target="_blank">
-        <i class="bi bi-door-open-fill"></i>
-        <span>الغرف</span>
+        <i class="bi bi-door-open-fill"></i><span>الغرف</span>
     </a>
 </div>
 
-<!-- ==================== WALL MODAL ==================== -->
+<!-- WALL MODAL -->
 <div class="wall-modal" id="wallModal">
     <div class="wall-panel" onclick="event.stopPropagation()">
         <div class="wall-panel-header">
@@ -770,31 +1047,24 @@ body {
                 <span>الجدار</span>
                 <span class="wall-panel-count" id="wallCount">0</span>
             </div>
-            <button class="wall-close-btn" onclick="closeWallModal()">
-                <i class="bi bi-x-lg"></i>
-            </button>
+            <button class="wall-close-btn" onclick="closeWallModal()"><i class="bi bi-x-lg"></i></button>
         </div>
         <div class="wall-panel-body" id="wallMessages">
-            <div class="wall-empty">
-                <i class="bi bi-chat-square-text"></i>
-                لا توجد رسائل بعد
-            </div>
+            <div class="wall-empty"><i class="bi bi-chat-square-text"></i>لا توجد رسائل بعد</div>
         </div>
         <div class="wall-panel-footer">
             <div class="wall-write-box">
                 <div class="wall-my-avatar" id="wallMyAvatar">?</div>
                 <div class="wall-input-wrap">
                     <textarea id="wallInput" placeholder="اكتب رسالتك... (Enter للإرسال)" maxlength="200" rows="1"></textarea>
-                    <button class="wall-send-btn" onclick="postToWall()">
-                        <i class="bi bi-send-fill"></i>
-                    </button>
+                    <button class="wall-send-btn" onclick="postToWall()"><i class="bi bi-send-fill"></i></button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ==================== HISTORY MODAL ==================== -->
+<!-- HISTORY MODAL -->
 <div class="modal" id="historyModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -807,7 +1077,7 @@ body {
     </div>
 </div>
 
-<!-- ==================== RANKING MODAL ==================== -->
+<!-- RANKING MODAL -->
 <div class="modal" id="rankingModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -820,7 +1090,7 @@ body {
     </div>
 </div>
 
-<!-- ==================== PROFILE MODAL (كامل) ==================== -->
+<!-- PROFILE MODAL -->
 <div class="my-profile-modal" id="profileFullModal">
     <div class="my-profile-card">
         <button class="modal-close" id="closeProfileFullBtn" style="position:absolute;top:12px;right:12px;z-index:10;background:rgba(0,0,0,.5);"><i class="bi bi-x-lg"></i></button>
@@ -837,11 +1107,12 @@ body {
             </div>
             <div class="my-profile-bio" id="pfBio">لا توجد سيرة ذاتية</div>
         </div>
-        <div class="my-profile-tabs">
+        <div class="my-profile-tabs" id="pfTabsContainer">
             <div class="my-profile-tab active" data-pftab="info">📝 المعلومات</div>
             <div class="my-profile-tab" data-pftab="style">🎨 المظهر</div>
             <div class="my-profile-tab" data-pftab="sizes">📏 الأحجام</div>
             <div class="my-profile-tab" data-pftab="security">🔒 الأمان</div>
+            <div class="my-profile-tab" id="pfRoyalTab" style="display:none;" data-pftab="royal">👑 ملكي</div>
         </div>
         <div class="my-profile-tab-content active" id="pftab-info">
             <div class="avatar-upload-area">
@@ -881,6 +1152,109 @@ body {
             <div class="form-group"><label>كلمة السر الحالية</label><input type="password" id="currentPassword"></div>
             <div class="form-group"><label>كلمة السر الجديدة</label><input type="password" id="newPassword"></div>
             <button class="profile-save-btn" id="savePasswordBtn" style="background:linear-gradient(135deg,#ff2e63,#c0392b);color:#fff;">🔒 تغيير كلمة السر</button>
+        </div>
+        <div class="my-profile-tab-content" id="pftab-royal">
+            <div style="text-align:center;margin-bottom:16px;">
+                <div style="font-size:40px;margin-bottom:8px;">👑</div>
+                <div style="font-size:14px;font-weight:800;color:var(--gold);margin-bottom:4px;">لوحة التحكم الملكية</div>
+                <div style="font-size:10px;color:var(--text3);">خاص بالملك والملكة فقط</div>
+            </div>
+            <div style="background:rgba(255,215,0,.08);border:1.5px solid rgba(255,215,0,.3);border-radius:14px;padding:14px;margin-bottom:12px;">
+                <div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+                    <i class="bi bi-megaphone-fill"></i> إعلان ملكي
+                </div>
+                <button class="profile-save-btn" id="openRoyalAdBtn" style="margin-top:0;background:linear-gradient(135deg,#ffd700,#f39c12);color:#000;">📢 إنشاء إعلان ملكي</button>
+            </div>
+            <div style="background:rgba(52,152,219,.08);border:1.5px solid rgba(52,152,219,.3);border-radius:14px;padding:14px;margin-bottom:12px;">
+                <div style="font-size:12px;font-weight:800;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+                    <i class="bi bi-images"></i> صور الواجهة
+                </div>
+                <div class="bg-manager-grid" id="bgManagerGrid"></div>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label>إضافة رابط صورة جديدة</label>
+                    <input type="url" id="royalBgImageUrl" placeholder="https://...">
+                </div>
+                <button class="profile-save-btn" id="saveRoyalBgBtn" style="margin-top:0;background:linear-gradient(135deg,#3498db,#2980b9);color:#fff;">➕ إضافة الصورة</button>
+            </div>
+            <div style="background:rgba(155,89,182,.08);border:1.5px solid rgba(155,89,182,.3);border-radius:14px;padding:14px;">
+                <div style="font-size:12px;font-weight:800;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+                    <i class="bi bi-music-note-beamed"></i> إدارة الموسيقى
+                </div>
+                <div class="music-manager-list" id="musicManagerList"></div>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label>عنوان المقطع (اختياري)</label>
+                    <input type="text" id="royalMusicTitle" placeholder="اسم المقطع">
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                    <label>رابط الموسيقى</label>
+                    <input type="url" id="royalMusicUrl" placeholder="https://example.com/song.mp3">
+                </div>
+                <button class="profile-save-btn" id="saveRoyalMusicBtn" style="margin-top:0;background:linear-gradient(135deg,#9b59b6,#8e44ad);color:#fff;">➕ إضافة المقطع</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ROYAL AD FULLSCREEN -->
+<div class="royal-msg-fullscreen" id="royalAdFullscreen">
+    <div class="royal-ad-banner" id="royalAdBanner">
+        <div class="royal-ad-content">
+            <div class="royal-ad-header">
+                <span class="royal-ad-crown">👑</span>
+                <div>
+                    <div class="royal-ad-title" id="royalAdTitle">إعلان ملكي</div>
+                    <div class="royal-ad-subtitle" id="royalAdSubtitle">من صاحب المملكة</div>
+                </div>
+                <span class="royal-ad-badge">ROYAL</span>
+            </div>
+            <img class="royal-ad-image" id="royalAdImage" src="" alt="" style="display:none;">
+            <div class="royal-ad-desc" id="royalAdDesc"></div>
+            <div class="royal-ad-actions">
+                <a class="royal-ad-btn royal-ad-btn-link" id="royalAdLinkBtn" href="#" target="_blank" style="display:none;">
+                    <i class="bi bi-box-arrow-up-right"></i> فتح الرابط
+                </a>
+                <button class="royal-ad-btn royal-ad-btn-ack" id="royalAdAckBtn">
+                    <i class="bi bi-check-circle-fill"></i> علم
+                </button>
+            </div>
+            <div class="royal-ad-footer" id="royalAdFooter">— إعلان رسمي —</div>
+        </div>
+    </div>
+</div>
+
+<!-- ROYAL AD COMPOSER -->
+<div class="royal-composer-overlay" id="royalComposerOverlay">
+    <div class="royal-composer">
+        <div class="royal-composer-header">
+            <div class="royal-composer-title">
+                <span style="font-size:22px;">📢</span>
+                <span>إعلان ملكي جديد</span>
+            </div>
+            <button class="modal-close" id="closeRoyalComposerBtn" style="width:32px;height:32px;"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="royal-composer-body">
+            <div class="form-group">
+                <label><i class="bi bi-type-h1"></i> العنوان *</label>
+                <input type="text" id="adTitleInput" placeholder="مثال: إعلان مهم لجميع الأعضاء">
+            </div>
+            <div class="form-group">
+                <label><i class="bi bi-card-text"></i> الشرح *</label>
+                <textarea id="adDescInput" placeholder="اكتب تفاصيل الإعلان هنا..." rows="5"></textarea>
+            </div>
+            <div class="form-group">
+                <label><i class="bi bi-image-fill"></i> رابط صورة (اختياري)</label>
+                <input type="url" id="adImageInput" placeholder="https://example.com/image.jpg">
+            </div>
+            <div class="royal-preview-box" id="adPreviewBox" style="display:none;">
+                <img id="adPreviewImg" src="" alt="">
+            </div>
+            <div class="form-group" style="margin-top:12px;">
+                <label><i class="bi bi-link-45deg"></i> رابط خارجي (اختياري)</label>
+                <input type="url" id="adLinkInput" placeholder="https://example.com">
+            </div>
+            <button class="royal-publish-btn" id="publishRoyalAdBtn">
+                <i class="bi bi-send-fill"></i> 🚀 نشر الإعلان للجميع
+            </button>
         </div>
     </div>
 </div>
@@ -925,19 +1299,17 @@ const PLAY_URL = 'https://hsn5mlk.github.io/Startdan/';
 const ROOMS_URL = 'https://hsn5mlk.github.io/Roomdan/';
 const MAX_WALL_MESSAGES = 30;
 
-// ✅ بدون شفافية - وضوح 100%
-const BG_IMAGES = [
+let BG_IMAGES = [
     'https://iili.io/n1IJp9a.gif',
     'https://iili.io/n1IF2MQ.gif',
     'https://iili.io/n1InPJp.gif'
 ];
 const BG_INTERVAL = 8000;
-const HERO_BG = 'https://iili.io/nY4x8Eg.gif';
 
-const AUDIO_URLS = [
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-    'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'
+let MUSIC_LIST = [
+    { id: 'default_1', title: 'الموسيقى الافتراضية', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' }
 ];
+let currentMusicId = 'default_1';
 
 const COLOR_PALETTE = ['#ffffff','#ffd700','#ff6b35','#ff2e63','#2ecc71','#3498db','#9b59b6','#1abc9c','#e74c3c','#f39c12','#ecf0f1','#95a5a6','#34495e','#16a085','#c0392b','#8e44ad'];
 const PROFILE_BACKGROUNDS = [
@@ -962,7 +1334,7 @@ const ANIMATED_FONTS = [
     {id:11, name:'أزرق سماوي', class:'animated-font-11'},
     {id:12, name:'توهج ذهبي', class:'animated-font-12'},
     {id:13, name:'تدرج ملون', class:'animated-font-13'},
-    {id:14, name:'تمويج', class:'animated-font-14'},
+    {id:14, name:'تموج', class:'animated-font-14'},
     {id:15, name:'أخضر لامع', class:'animated-font-15'}
 ];
 
@@ -981,7 +1353,6 @@ let firstLoad = true;
 let wallModalOpen = false;
 let currentBgIndex = 0;
 
-// Profile variables
 let selectedAvatarDataUrl = '';
 let selectedNameColor = '#ffffff';
 let selectedTextColor = '#ffffff';
@@ -989,6 +1360,12 @@ let selectedProfileBg = '';
 let selectedAnimatedFont = 0;
 let mySizes = { font: 16, avatar: 30, name: 10 };
 let myWinsCount = 0;
+
+let wallNotifsMuted = false;
+let currentViewProfileUid = null;
+let royalAdUnsubscribe = null;
+let currentAdId = null;
+let musicListener = null;
 
 function $(id) { return document.getElementById(id); }
 
@@ -1001,6 +1378,7 @@ function showToast(icon, msg) {
 }
 
 function showFloatNotif(text) {
+    if (wallNotifsMuted) return;
     const n = $('floatNotif');
     $('floatNotifText').textContent = text;
     n.classList.add('show');
@@ -1023,6 +1401,7 @@ function initAudioContext() {
     return audioContext;
 }
 function playNewMessageSound() {
+    if (wallNotifsMuted) return;
     const ctx = initAudioContext(); if (!ctx) return;
     try {
         const notes = [
@@ -1073,10 +1452,11 @@ function playToggleSound(open = true) {
     } catch(e) {}
 }
 
-// ============ BACKGROUND (بدون شفافية) ============
+// ============ BACKGROUND ============
 function initBackground() {
     const container = $('bgSlideshow');
     if (!container) return;
+    container.innerHTML = '';
     BG_IMAGES.forEach((url, i) => {
         const slide = document.createElement('div');
         slide.className = 'bg-slide';
@@ -1087,6 +1467,8 @@ function initBackground() {
     BG_IMAGES.forEach(url => { const img = new Image(); img.src = url; });
     const slides = container.querySelectorAll('.bg-slide');
     if (slides[0]) slides[0].classList.add('active');
+    currentBgIndex = 0;
+    if (bgInterval) clearInterval(bgInterval);
     bgInterval = setInterval(() => {
         const allSlides = container.querySelectorAll('.bg-slide');
         if (allSlides.length === 0) return;
@@ -1100,27 +1482,169 @@ function initBackground() {
 }
 
 // ============ MUSIC ============
+let bgMusicAudio = null;
+let musicStateListener = null;
+
+function getBgMusicAudio() {
+    if (!bgMusicAudio) {
+        bgMusicAudio = document.getElementById('bgMusic');
+    }
+    return bgMusicAudio;
+}
+
+function playMusicById(musicId) {
+    const music = MUSIC_LIST.find(m => m.id === musicId);
+    if (!music) return false;
+    const audio = getBgMusicAudio();
+    if (!audio) return false;
+    audio.src = music.url;
+    audio.volume = 0.35;
+    audio.play().then(() => {
+        bgMusicStarted = true;
+        currentMusicId = musicId;
+        return true;
+    }).catch(() => false);
+    return true;
+}
+
 function initMusic() {
-    const audio = document.createElement('audio');
+    let audio = document.getElementById('bgMusic');
+    if (audio) audio.remove();
+    audio = document.createElement('audio');
     audio.id = 'bgMusic';
     audio.loop = true;
     audio.preload = 'auto';
     audio.volume = 0.35;
-    audio.innerHTML = `<source src="${AUDIO_URLS[0]}" type="audio/mpeg">`;
     document.body.appendChild(audio);
+    bgMusicAudio = audio;
+    
+    // تشغيل الموسيقى النشطة
+    const activeMusic = MUSIC_LIST.find(m => m.id === currentMusicId) || MUSIC_LIST[0];
+    if (activeMusic) {
+        audio.src = activeMusic.url;
+    }
     
     const tryPlay = async () => {
-        try {
-            await audio.play();
-            bgMusicStarted = true;
-            return true;
-        } catch(e) { return false; }
+        try { await audio.play(); bgMusicStarted = true; return true; } catch(e) { return false; }
     };
     tryPlay();
     const events = ['click', 'touchstart', 'keydown', 'scroll'];
     const handler = () => { if (!bgMusicStarted) tryPlay(); };
     events.forEach(ev => document.addEventListener(ev, handler, { passive: true }));
 }
+
+function listenForMusic() {
+    if (musicListener) musicListener();
+    musicListener = onSnapshot(doc(db, 'm7basSettings', 'music'), (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        if (data.list && data.list.length > 0) {
+            MUSIC_LIST = data.list;
+        }
+        if (data.currentId) {
+            if (currentMusicId !== data.currentId) {
+                currentMusicId = data.currentId;
+                const music = MUSIC_LIST.find(m => m.id === currentMusicId);
+                if (music) {
+                    const audio = getBgMusicAudio();
+                    if (audio) {
+                        audio.src = music.url;
+                        audio.play().then(() => { bgMusicStarted = true; }).catch(() => {});
+                    }
+                }
+            }
+        }
+        if ($('profileFullModal').classList.contains('active')) {
+            renderMusicManager();
+        }
+    });
+}
+
+function renderMusicManager() {
+    const list = $('musicManagerList');
+    if (!list) return;
+    if (MUSIC_LIST.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:11px;">لا توجد مقاطع موسيقية</div>';
+        return;
+    }
+    list.innerHTML = MUSIC_LIST.map(m => {
+        const isPlaying = m.id === currentMusicId && bgMusicStarted;
+        return `<div class="music-item ${isPlaying ? 'playing' : ''}">
+            <div class="music-icon">
+                <i class="bi bi-${isPlaying ? 'music-note-beamed' : 'music-note'}"></i>
+            </div>
+            <div class="music-info">
+                <div class="music-title">${m.title || 'بدون عنوان'} ${isPlaying ? '🎵' : ''}</div>
+                <div class="music-url">${m.url}</div>
+            </div>
+            <div class="music-actions">
+                ${isPlaying 
+                    ? `<button class="music-btn stop" onclick="stopMusicById('${m.id}')" title="إيقاف"><i class="bi bi-pause-fill"></i></button>`
+                    : `<button class="music-btn play" onclick="playMusicById('${m.id}')" title="تشغيل"><i class="bi bi-play-fill"></i></button>`
+                }
+                <button class="music-btn del" onclick="deleteMusicById('${m.id}')" title="حذف"><i class="bi bi-trash-fill"></i></button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+window.playMusicById = async function(musicId) {
+    const music = MUSIC_LIST.find(m => m.id === musicId);
+    if (!music) return;
+    const audio = getBgMusicAudio();
+    if (!audio) return;
+    audio.src = music.url;
+    audio.volume = 0.35;
+    try {
+        await audio.play();
+        bgMusicStarted = true;
+        currentMusicId = musicId;
+        // حفظ الحالة في Firestore
+        try {
+            await setDoc(doc(db, 'm7basSettings', 'music'), { currentId: musicId }, { merge: true });
+        } catch(e) {}
+        renderMusicManager();
+        showToast('🎵', 'تم تشغيل: ' + (music.title || 'المقطع'));
+    } catch(e) {
+        showToast('❌', 'فشل التشغيل');
+    }
+};
+
+window.stopMusicById = async function(musicId) {
+    if (musicId !== currentMusicId) return;
+    const audio = getBgMusicAudio();
+    if (audio) audio.pause();
+    bgMusicStarted = false;
+    renderMusicManager();
+    showToast('⏸️', 'تم إيقاف الموسيقى');
+};
+
+window.deleteMusicById = async function(musicId) {
+    if (!isRoyal) return showToast('⚠️', 'غير مصرح');
+    if (MUSIC_LIST.length <= 1) return showToast('⚠️', 'يجب أن يبقى مقطع واحد على الأقل');
+    if (!confirm('حذف هذا المقطع؟')) return;
+    try {
+        const newList = MUSIC_LIST.filter(m => m.id !== musicId);
+        let newCurrentId = currentMusicId;
+        if (currentMusicId === musicId) {
+            newCurrentId = newList[0].id;
+            // تشغيل المقطع الجديد
+            const audio = getBgMusicAudio();
+            if (audio) {
+                audio.src = newList[0].url;
+                audio.play().then(() => { bgMusicStarted = true; }).catch(() => {});
+            }
+        }
+        await setDoc(doc(db, 'm7basSettings', 'music'), { 
+            list: newList, 
+            currentId: newCurrentId 
+        }, { merge: true });
+        MUSIC_LIST = newList;
+        currentMusicId = newCurrentId;
+        renderMusicManager();
+        showToast('🗑️', 'تم الحذف');
+    } catch(e) { showToast('❌', 'فشل الحذف'); }
+};
 
 // ============ AUTH ============
 function generateDefaultAvatar(name) {
@@ -1248,7 +1772,6 @@ onAuthStateChanged(auth, async (user) => {
         isRoyal = (currentUserEmail === KING_EMAIL || currentUserEmail === QUEEN_EMAIL);
         $('authScreen').classList.remove('active');
         
-        // تحميل بيانات المستخدم
         try {
             const userDoc = await getDoc(doc(db, 'users', user.uid));
             if (userDoc.exists()) {
@@ -1259,21 +1782,30 @@ onAuthStateChanged(auth, async (user) => {
             }
         } catch(e) {}
         
-        // تحديث الواجهة
         updateUserUI();
         await registerPresence();
         listenForWallMessages();
         await loadMyWins();
+        await loadRoyalBackgrounds();
+        await loadRoyalMusic();
+        await listenForRoyalAd();
+        listenForMusic();
+        updateRoyalTabVisibility();
         
-        // تحديث آخر ظهور
         try { await setDoc(doc(db,'users',user.uid), {lastSeen: Date.now()}, {merge: true}); } catch(e) {}
     } else {
         currentUser = null;
         $('authScreen').classList.add('active');
         $('myAvatar').textContent = '?';
         $('myAvatar').innerHTML = '?';
+        isRoyal = false;
     }
 });
+
+function updateRoyalTabVisibility() {
+    const tab = $('pfRoyalTab');
+    if (tab) tab.style.display = isRoyal ? 'block' : 'none';
+}
 
 function updateUserUI() {
     const name = myUserData.name || currentUser.displayName || currentUser.email?.split('@')[0] || 'مستخدم';
@@ -1284,7 +1816,6 @@ function updateUserUI() {
     } else {
         avEl.textContent = name.charAt(0);
     }
-    // تحديث صورة الجدار
     const wallAv = $('wallMyAvatar');
     if (av) wallAv.innerHTML = `<img src="${av}" alt="">`;
     else wallAv.textContent = name.charAt(0);
@@ -1295,6 +1826,78 @@ async function loadMyWins() {
         const d = await getDoc(doc(db, 'm7basLeaderboard', currentUser.uid));
         myWinsCount = d.exists() ? (d.data().wins || 0) : 0;
     } catch(e) { myWinsCount = 0; }
+}
+
+// ============ ROYAL BACKGROUNDS ============
+async function loadRoyalBackgrounds() {
+    try {
+        const docRef = doc(db, 'm7basSettings', 'backgrounds');
+        const d = await getDoc(docRef);
+        if (d.exists() && d.data().images && d.data().images.length > 0) {
+            BG_IMAGES = d.data().images;
+            initBackground();
+        }
+    } catch(e) {}
+}
+
+// ============ ROYAL MUSIC ============
+async function loadRoyalMusic() {
+    try {
+        const docRef = doc(db, 'm7basSettings', 'music');
+        const d = await getDoc(docRef);
+        if (d.exists()) {
+            const data = d.data();
+            if (data.list && data.list.length > 0) MUSIC_LIST = data.list;
+            if (data.currentId) currentMusicId = data.currentId;
+        }
+        // تحديث audio
+        const audio = getBgMusicAudio();
+        if (audio) {
+            const music = MUSIC_LIST.find(m => m.id === currentMusicId) || MUSIC_LIST[0];
+            if (music) audio.src = music.url;
+        }
+    } catch(e) {}
+}
+
+// ============ ROYAL AD ============
+async function listenForRoyalAd() {
+    if (royalAdUnsubscribe) royalAdUnsubscribe();
+    try {
+        royalAdUnsubscribe = onSnapshot(doc(db, 'm7basSettings', 'royalAd'), (snap) => {
+            if (!snap.exists()) return;
+            const ad = snap.data();
+            if (!ad.active) return;
+            const adId = ad.id || snap.id;
+            if (currentAdId === adId) return;
+            try {
+                if (localStorage.getItem('m7basAdAck_' + adId) === '1') { currentAdId = adId; return; }
+            } catch(e) {}
+            if (isRoyal) { currentAdId = adId; return; }
+            currentAdId = adId;
+            showRoyalAd(ad, adId);
+        });
+    } catch(e) {}
+}
+
+function showRoyalAd(ad, adId) {
+    $('royalAdTitle').textContent = ad.title || 'إعلان ملكي';
+    $('royalAdSubtitle').textContent = ad.subtitle || 'من صاحب المملكة';
+    $('royalAdDesc').textContent = ad.description || '';
+    $('royalAdFooter').textContent = ad.footer || '— إعلان رسمي —';
+    const img = $('royalAdImage');
+    if (ad.imageUrl) { img.src = ad.imageUrl; img.style.display = 'block'; } else { img.style.display = 'none'; }
+    const linkBtn = $('royalAdLinkBtn');
+    if (ad.linkUrl) { linkBtn.href = ad.linkUrl; linkBtn.style.display = 'flex'; } else { linkBtn.style.display = 'none'; }
+    const fs = $('royalAdFullscreen');
+    fs.classList.add('show');
+    if (window._royalAdTimeout) clearTimeout(window._royalAdTimeout);
+    window._royalAdTimeout = setTimeout(() => { fs.classList.remove('show'); }, 15000);
+    $('royalAdAckBtn').onclick = () => {
+        fs.classList.remove('show');
+        if (window._royalAdTimeout) clearTimeout(window._royalAdTimeout);
+        try { localStorage.setItem('m7basAdAck_' + adId, '1'); } catch(e) {}
+        showToast('✅', 'تم');
+    };
 }
 
 // ============ PRESENCE ============
@@ -1322,26 +1925,22 @@ async function registerPresence() {
 
 // ============ AVATAR CLICK ============
 window.onAvatarClick = function() {
-    if (!currentUser) {
-        showToast('⚠️', 'سجّل دخولك أولاً');
-        return;
-    }
+    if (!currentUser) { showToast('⚠️', 'سجّل دخولك أولاً'); return; }
     openMyProfile();
 };
 
 // ============ PROFILE MODAL ============
 window.openMyProfile = async function(startTab = 'info') {
     if (!currentUser) return showToast('⚠️', 'سجل دخولك');
-    
-    // تحميل البيانات المحدثة
+    currentViewProfileUid = null;
     try {
         const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
         if (userDoc.exists()) myUserData = userDoc.data();
     } catch(e) {}
     
     await loadMyWins();
+    updateRoyalTabVisibility();
     
-    // تحديث البيانات
     $('pfAvatar').src = myUserData.avatar || currentUser.photoURL || '';
     $('pfName').textContent = myUserData.name || currentUser.displayName || 'مستخدم';
     $('pfName').style.color = myUserData.nameColor || '#fff';
@@ -1353,7 +1952,6 @@ window.openMyProfile = async function(startTab = 'info') {
         : 'linear-gradient(135deg,#ff6b35,#ff2e63)';
     $('pfWinsCount').textContent = myWinsCount;
     
-    // حقول التعديل
     $('editAvatarPreview').src = myUserData.avatar || currentUser.photoURL || '';
     $('editName').value = myUserData.name || currentUser.displayName || '';
     $('editBio').value = myUserData.bio || '';
@@ -1361,15 +1959,16 @@ window.openMyProfile = async function(startTab = 'info') {
     $('currentPassword').value = '';
     $('newPassword').value = '';
     $('customProfileBg').value = myUserData.profileBg || '';
+    $('royalBgImageUrl').value = '';
+    $('royalMusicTitle').value = '';
+    $('royalMusicUrl').value = '';
     
-    // القيم الحالية
     selectedNameColor = myUserData.nameColor || '#ffffff';
     selectedTextColor = myUserData.textColor || '#ffffff';
     selectedProfileBg = myUserData.profileBg || '';
     selectedAnimatedFont = myUserData.animatedFont || 0;
     selectedAvatarDataUrl = myUserData.avatar || currentUser.photoURL || '';
     
-    // الأحجام
     $('fontSizeSlider').value = mySizes.font;
     $('fontSizeValue').textContent = mySizes.font;
     $('avatarSizeSlider').value = mySizes.avatar;
@@ -1377,28 +1976,135 @@ window.openMyProfile = async function(startTab = 'info') {
     $('nameSizeSlider').value = mySizes.name;
     $('nameSizeValue').textContent = mySizes.name;
     
-    // الشبكات
     renderColorGrids();
     renderBgGrid();
     renderFontStyleGrid();
+    renderBgManager();
+    renderMusicManager();
     
-    // التبويب
+    $('pfTabsContainer').style.display = '';
     document.querySelectorAll('.my-profile-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.my-profile-tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelector(`.my-profile-tab[data-pftab="${startTab}"]`).classList.add('active');
-    $(`pftab-${startTab}`).classList.add('active');
+    document.querySelectorAll('.my-profile-tab-content').forEach(c => { c.classList.remove('active'); c.style.display = ''; });
+    const tab = document.querySelector(`.my-profile-tab[data-pftab="${startTab}"]`);
+    if (tab) tab.classList.add('active');
+    const content = $(`pftab-${startTab}`);
+    if (content) content.classList.add('active');
     
     $('profileFullModal').classList.add('active');
 };
 
-$('closeProfileFullBtn').addEventListener('click', () => $('profileFullModal').classList.remove('active'));
+// ============ VIEW OTHER USER PROFILE (بدون بريد) ============
+window.showOtherProfile = async function(uid) {
+    if (!uid || !currentUser) return;
+    if (uid === currentUser.uid) { openMyProfile(); return; }
+    
+    currentViewProfileUid = uid;
+    
+    $('pfName').textContent = '⏳ جاري التحميل...';
+    $('pfEmail').textContent = '';
+    $('pfBio').textContent = '';
+    $('pfWinsCount').textContent = '...';
+    $('pfAvatar').src = generateDefaultAvatar('?');
+    $('profileFullModal').classList.add('active');
+    
+    let d = {};
+    try {
+        const ud = await getDoc(doc(db, 'users', uid));
+        if (ud.exists()) {
+            d = ud.data();
+        } else {
+            const lb = await getDoc(doc(db, 'm7basLeaderboard', uid));
+            if (lb.exists()) {
+                const lbData = lb.data();
+                d = {
+                    name: lbData.name || 'مستخدم',
+                    avatar: lbData.avatar || '',
+                    bio: '',
+                    nameColor: '#fff',
+                    textColor: '',
+                    profileBg: ''
+                };
+            }
+        }
+    } catch(e) { console.error('showOtherProfile error:', e); }
+    
+    const name = d.name || 'مستخدم';
+    const avatar = d.avatar || '';
+    const bio = d.bio || '';
+    const nameColor = d.nameColor || '#fff';
+    const profileBg = d.profileBg || '';
+    const textColor = d.textColor || '';
+    
+    let winsCount = 0;
+    try {
+        const wd = await getDoc(doc(db, 'm7basLeaderboard', uid));
+        if (wd.exists()) winsCount = wd.data().wins || 0;
+    } catch(e) {}
+    
+    if (avatar) {
+        $('pfAvatar').src = avatar;
+        $('pfAvatar').onerror = function() { this.src = generateDefaultAvatar(name); };
+    } else {
+        $('pfAvatar').src = generateDefaultAvatar(name);
+    }
+    
+    $('pfName').textContent = name;
+    $('pfName').style.color = nameColor;
+    // ✅ إخفاء البريد الإلكتروني للأعضاء الآخرين (خصوصية)
+    $('pfEmail').textContent = '';
+    $('pfEmail').style.display = 'none';
+    $('pfBio').textContent = bio || 'لا توجد سيرة ذاتية';
+    $('pfBio').style.color = textColor;
+    $('pfHeader').style.background = profileBg 
+        ? `url(${profileBg}) center/cover` 
+        : 'linear-gradient(135deg,#ff6b35,#ff2e63)';
+    $('pfWinsCount').textContent = winsCount;
+    
+    $('pfTabsContainer').style.display = 'none';
+    document.querySelectorAll('.my-profile-tab-content').forEach(c => {
+        c.classList.remove('active');
+        c.style.display = 'none';
+    });
+    $('pftab-info').classList.add('active');
+    $('pftab-info').style.display = 'block';
+    
+    const infoContent = $('pftab-info');
+    infoContent.querySelector('.avatar-upload-area').style.display = 'none';
+    const nameInput = infoContent.querySelector('#editName');
+    const bioInput = infoContent.querySelector('#editBio');
+    const saveBtn = infoContent.querySelector('#saveInfoBtn');
+    if (nameInput) nameInput.parentElement.style.display = 'none';
+    if (bioInput) bioInput.parentElement.style.display = 'none';
+    if (saveBtn) saveBtn.style.display = 'none';
+};
+
+// ============ CLOSE PROFILE ============
+$('closeProfileFullBtn').addEventListener('click', () => {
+    $('profileFullModal').classList.remove('active');
+    $('pfEmail').style.display = '';
+    const infoContent = $('pftab-info');
+    infoContent.querySelector('.avatar-upload-area').style.display = '';
+    const nameInput = infoContent.querySelector('#editName');
+    const bioInput = infoContent.querySelector('#editBio');
+    const saveBtn = infoContent.querySelector('#saveInfoBtn');
+    if (nameInput) nameInput.parentElement.style.display = '';
+    if (bioInput) bioInput.parentElement.style.display = '';
+    if (saveBtn) saveBtn.style.display = '';
+    document.querySelectorAll('.my-profile-tab-content').forEach(c => { c.style.display = ''; });
+    $('pfTabsContainer').style.display = '';
+});
 
 document.querySelectorAll('.my-profile-tab').forEach(tab => {
     tab.addEventListener('click', () => {
+        if (currentViewProfileUid) return;
         document.querySelectorAll('.my-profile-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.my-profile-tab-content').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         $(`pftab-${tab.dataset.pftab}`).classList.add('active');
+        if (tab.dataset.pftab === 'royal') {
+            renderBgManager();
+            renderMusicManager();
+        }
     });
 });
 
@@ -1409,20 +2115,11 @@ function renderColorGrids() {
     $('textColorGrid').innerHTML = COLOR_PALETTE.map(c => 
         `<div class="color-item ${c === selectedTextColor ? 'sel' : ''}" data-color="${c}" style="background:${c};"></div>`
     ).join('');
-    
     $('nameColorGrid').querySelectorAll('.color-item').forEach(i => 
-        i.addEventListener('click', () => { 
-            selectedNameColor = i.dataset.color; 
-            renderColorGrids(); 
-            $('pfName').style.color = selectedNameColor; 
-        })
+        i.addEventListener('click', () => { selectedNameColor = i.dataset.color; renderColorGrids(); $('pfName').style.color = selectedNameColor; })
     );
     $('textColorGrid').querySelectorAll('.color-item').forEach(i => 
-        i.addEventListener('click', () => { 
-            selectedTextColor = i.dataset.color; 
-            renderColorGrids(); 
-            $('pfBio').style.color = selectedTextColor; 
-        })
+        i.addEventListener('click', () => { selectedTextColor = i.dataset.color; renderColorGrids(); $('pfBio').style.color = selectedTextColor; })
     );
 }
 
@@ -1446,12 +2143,40 @@ function renderFontStyleGrid() {
     grid.innerHTML = `<div class="bg-item ${selectedAnimatedFont === 0 ? 'sel' : ''}" data-font="0" style="display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;aspect-ratio:auto;height:40px;">عادي</div>` +
         ANIMATED_FONTS.map(f => `<div class="bg-item ${selectedAnimatedFont === f.id ? 'sel' : ''}" data-font="${f.id}" style="display:flex;align-items:center;justify-content:center;aspect-ratio:auto;height:40px;"><span class="${f.class}">${f.name}</span></div>`).join('');
     grid.querySelectorAll('[data-font]').forEach(i => 
-        i.addEventListener('click', () => { 
-            selectedAnimatedFont = parseInt(i.dataset.font); 
-            renderFontStyleGrid(); 
-        })
+        i.addEventListener('click', () => { selectedAnimatedFont = parseInt(i.dataset.font); renderFontStyleGrid(); })
     );
 }
+
+// ============ BACKGROUND MANAGER ============
+function renderBgManager() {
+    const grid = $('bgManagerGrid');
+    if (!grid) return;
+    if (BG_IMAGES.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text3);font-size:11px;">لا توجد صور</div>';
+        return;
+    }
+    grid.innerHTML = BG_IMAGES.map((url, idx) => `
+        <div class="bg-manager-item" style="background-image:url('${url}')">
+            <button class="bg-del-btn" onclick="deleteBgImage(${idx})" title="حذف"><i class="bi bi-trash-fill"></i></button>
+            ${idx === currentBgIndex ? '<span class="bg-active-badge">الحالية</span>' : ''}
+        </div>
+    `).join('');
+}
+
+window.deleteBgImage = async function(idx) {
+    if (!isRoyal) return showToast('⚠️', 'غير مصرح');
+    if (BG_IMAGES.length <= 1) return showToast('⚠️', 'يجب أن تبقى صورة واحدة على الأقل');
+    if (!confirm('حذف هذه الصورة من الواجهة؟')) return;
+    try {
+        const newImages = BG_IMAGES.filter((_, i) => i !== idx);
+        await setDoc(doc(db, 'm7basSettings', 'backgrounds'), { images: newImages }, { merge: true });
+        BG_IMAGES = newImages;
+        if (currentBgIndex >= BG_IMAGES.length) currentBgIndex = 0;
+        initBackground();
+        renderBgManager();
+        showToast('🗑️', 'تم حذف الصورة');
+    } catch(e) { showToast('❌', 'فشل الحذف'); }
+};
 
 // ============ PROFILE EDITS ============
 $('editUploadAvatarBtn').addEventListener('click', () => $('editAvatarFileInput').click());
@@ -1570,6 +2295,112 @@ $('savePasswordBtn').addEventListener('click', async () => {
         showToast('❌', e.code === 'auth/wrong-password' ? 'كلمة السر خطأ' : 'فشل التغيير');
     }
 });
+
+// ============ ROYAL AD COMPOSER ============
+$('openRoyalAdBtn').addEventListener('click', () => {
+    if (!isRoyal) return showToast('⚠️', 'غير مصرح');
+    $('profileFullModal').classList.remove('active');
+    $('adTitleInput').value = '';
+    $('adDescInput').value = '';
+    $('adImageInput').value = '';
+    $('adLinkInput').value = '';
+    $('adPreviewBox').style.display = 'none';
+    $('adPreviewImg').src = '';
+    $('royalComposerOverlay').classList.add('active');
+});
+
+$('closeRoyalComposerBtn').addEventListener('click', () => {
+    $('royalComposerOverlay').classList.remove('active');
+});
+
+$('royalComposerOverlay').addEventListener('click', (e) => {
+    if (e.target === $('royalComposerOverlay')) $('royalComposerOverlay').classList.remove('active');
+});
+
+$('adImageInput').addEventListener('input', (e) => {
+    const url = e.target.value.trim();
+    if (url) {
+        $('adPreviewImg').src = url;
+        $('adPreviewImg').onerror = () => { $('adPreviewBox').style.display = 'none'; };
+        $('adPreviewBox').style.display = 'block';
+    } else {
+        $('adPreviewBox').style.display = 'none';
+    }
+});
+
+$('publishRoyalAdBtn').addEventListener('click', async () => {
+    const title = $('adTitleInput').value.trim();
+    const description = $('adDescInput').value.trim();
+    const imageUrl = $('adImageInput').value.trim();
+    const linkUrl = $('adLinkInput').value.trim();
+    if (!title || !description) return showToast('⚠️', 'العنوان والشرح مطلوبان');
+    const adId = Date.now().toString();
+    try {
+        await setDoc(doc(db, 'm7basSettings', 'royalAd'), {
+            id: adId,
+            title,
+            subtitle: isRoyal ? 'من صاحب المملكة' : '',
+            description,
+            imageUrl: imageUrl || '',
+            linkUrl: linkUrl || '',
+            footer: '— إعلان رسمي —',
+            active: true,
+            createdBy: currentUser.uid,
+            createdAt: serverTimestamp()
+        });
+        $('royalComposerOverlay').classList.remove('active');
+        showToast('👑', 'تم نشر الإعلان للجميع');
+    } catch(e) { showToast('❌', 'فشل النشر'); }
+});
+
+// ============ ROYAL BACKGROUND ADD ============
+$('saveRoyalBgBtn').addEventListener('click', async () => {
+    if (!isRoyal) return showToast('⚠️', 'غير مصرح');
+    const url = $('royalBgImageUrl').value.trim();
+    if (!url) return showToast('⚠️', 'أدخل رابط الصورة');
+    try {
+        const newImages = [...BG_IMAGES, url];
+        await setDoc(doc(db, 'm7basSettings', 'backgrounds'), { images: newImages }, { merge: true });
+        BG_IMAGES = newImages;
+        $('royalBgImageUrl').value = '';
+        initBackground();
+        renderBgManager();
+        showToast('🖼️', 'تمت إضافة الصورة للواجهة');
+    } catch(e) { showToast('❌', 'فشل الإضافة'); }
+});
+
+// ============ ROYAL MUSIC ADD ============
+$('saveRoyalMusicBtn').addEventListener('click', async () => {
+    if (!isRoyal) return showToast('⚠️', 'غير مصرح');
+    const title = $('royalMusicTitle').value.trim() || 'مقطع موسيقي';
+    const url = $('royalMusicUrl').value.trim();
+    if (!url) return showToast('⚠️', 'أدخل رابط الموسيقى');
+    try {
+        const newId = 'music_' + Date.now();
+        const newList = [...MUSIC_LIST, { id: newId, title, url }];
+        await setDoc(doc(db, 'm7basSettings', 'music'), { list: newList }, { merge: true });
+        MUSIC_LIST = newList;
+        $('royalMusicTitle').value = '';
+        $('royalMusicUrl').value = '';
+        renderMusicManager();
+        showToast('🎵', 'تمت إضافة المقطع');
+    } catch(e) { showToast('❌', 'فشل الإضافة'); }
+});
+
+// ============ WALL NOTIF BELL ============
+window.toggleWallNotifs = function() {
+    wallNotifsMuted = !wallNotifsMuted;
+    const btn = $('wallBellInline');
+    if (wallNotifsMuted) {
+        btn.classList.add('muted');
+        btn.innerHTML = '<i class="bi bi-bell-slash-fill"></i>';
+        showToast('🔕', 'تم كتم إشعارات الجدار');
+    } else {
+        btn.classList.remove('muted');
+        btn.innerHTML = '<i class="bi bi-bell-fill"></i>';
+        showToast('🔔', 'تم تشغيل إشعارات الجدار');
+    }
+};
 
 // ============ WALL ============
 window.openWallModal = function() {
@@ -1781,6 +2612,56 @@ function getFrameClass(pos, isKing, isQueen) {
     return 'frame-default';
 }
 
+function rankUserCard(p, pos, isKing, isQueen, frameClass, medal) {
+    const crown = (isKing || isQueen || pos === 1) ? '<span class="rank-crown">👑</span>' : '';
+    const av = p.avatar 
+        ? `<img src="${p.avatar}" alt="" onerror="this.parentNode.innerHTML='<span>${(p.name||'?').charAt(0)}</span>'">`
+        : `<span>${(p.name || '?').charAt(0)}</span>`;
+    let tag = `المركز ${pos}`;
+    if (isKing) tag = '👑 الملك';
+    else if (isQueen) tag = '👑 الملكة';
+    else if (pos === 1) tag = '💎 ماسي';
+    else if (pos === 2) tag = '🥇 ذهبي';
+    else if (pos === 3) tag = '🥈 بلاتيني';
+    else if (pos === 4) tag = '🥉 فضي';
+    else if (pos === 5) tag = '🏅 برونزي';
+    return `<div class="rank-item" onclick="showOtherProfile('${p.uid}')">
+        <div class="rank-position">${medal}</div>
+        <div class="rank-avatar-wrap ${frameClass}">
+            ${crown}
+            <div class="rank-avatar">${av}</div>
+        </div>
+        <div class="rank-info">
+            <div class="rank-name">${p.name || 'لاعب'}</div>
+            <div class="rank-tag">${tag}</div>
+        </div>
+        <div class="rank-wins">${p.wins || 0} 🏆</div>
+    </div>`;
+}
+
+function podiumCard(p, pos, isKing, isQueen, frameClass, medal) {
+    const crown = (isKing || isQueen || pos === 1) ? '<span class="rank-crown">👑</span>' : '';
+    const av = p.avatar 
+        ? `<img src="${p.avatar}" alt="" onerror="this.parentNode.innerHTML='<span>${(p.name||'?').charAt(0)}</span>'">`
+        : `<span>${(p.name || '?').charAt(0)}</span>`;
+    let tag = `المركز ${pos}`;
+    if (isKing) tag = '👑 الملك';
+    else if (isQueen) tag = '👑 الملكة';
+    else if (pos === 1) tag = '💎 ماسي';
+    else if (pos === 2) tag = '🥇 ذهبي';
+    else if (pos === 3) tag = '🥈 بلاتيني';
+    return `<div class="podium-item podium-${pos}" onclick="showOtherProfile('${p.uid}')">
+        <div class="rank-avatar-wrap ${frameClass}">
+            ${crown}
+            <div class="rank-avatar">${av}</div>
+        </div>
+        <div class="podium-name">${p.name || 'لاعب'}</div>
+        <div class="podium-wins">${p.wins || 0} 🏆</div>
+        <div class="podium-place">${medal}</div>
+        <div style="font-size:9px;color:var(--text3);">${tag}</div>
+    </div>`;
+}
+
 async function loadRanking() {
     const list = $('rankingList');
     list.innerHTML = `<div class="empty-state"><i class="bi bi-hourglass-split"></i>جاري التحميل...</div>`;
@@ -1814,40 +2695,34 @@ async function loadRanking() {
             return;
         }
         players.sort((a, b) => (b.wins || 0) - (a.wins || 0));
+        
+        const first = players[0], second = players[1], third = players[2];
+        const rest = players.slice(3, 30);
+        
         let html = '';
-        players.slice(0, 30).forEach((p, i) => {
-            const pos = i + 1;
+        if (first || second || third) {
+            html += '<div class="ranking-podium">';
+            if (second) {
+                const e2 = (second.email || '').toLowerCase().trim();
+                html += podiumCard(second, 2, e2 === KING_EMAIL, e2 === QUEEN_EMAIL, getFrameClass(2, e2 === KING_EMAIL, e2 === QUEEN_EMAIL), '🥈');
+            }
+            if (first) {
+                const e1 = (first.email || '').toLowerCase().trim();
+                html += podiumCard(first, 1, e1 === KING_EMAIL, e1 === QUEEN_EMAIL, getFrameClass(1, e1 === KING_EMAIL, e1 === QUEEN_EMAIL), '🥇');
+            }
+            if (third) {
+                const e3 = (third.email || '').toLowerCase().trim();
+                html += podiumCard(third, 3, e3 === KING_EMAIL, e3 === QUEEN_EMAIL, getFrameClass(3, e3 === KING_EMAIL, e3 === QUEEN_EMAIL), '🥉');
+            }
+            html += '</div>';
+        }
+        rest.forEach((p, i) => {
+            const pos = i + 4;
             const email = (p.email || '').toLowerCase().trim();
             const isKing = email === KING_EMAIL;
             const isQueen = email === QUEEN_EMAIL;
             const frameClass = getFrameClass(pos, isKing, isQueen);
-            const medal = pos === 1 ? '👑' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : `${pos}`;
-            const crown = (isKing || isQueen || pos === 1) ? '<span class="rank-crown">👑</span>' : '';
-            const av = p.avatar 
-                ? `<img src="${p.avatar}" alt="" onerror="this.parentNode.innerHTML='<span>${(p.name||'?').charAt(0)}</span>'">`
-                : `<span>${(p.name || '?').charAt(0)}</span>`;
-            let tag = `المركز ${pos}`;
-            if (isKing) tag = '👑 الملك';
-            else if (isQueen) tag = '👑 الملكة';
-            else if (pos === 1) tag = '💎 ماسي';
-            else if (pos === 2) tag = '🥇 ذهبي';
-            else if (pos === 3) tag = '🥈 بلاتيني';
-            else if (pos === 4) tag = '🥉 فضي';
-            else if (pos === 5) tag = '🏅 برونزي';
-            html += `
-                <div class="rank-item">
-                    <div class="rank-position">${medal}</div>
-                    <div class="rank-avatar-wrap ${frameClass}">
-                        ${crown}
-                        <div class="rank-avatar">${av}</div>
-                    </div>
-                    <div class="rank-info">
-                        <div class="rank-name">${p.name || 'لاعب'}</div>
-                        <div class="rank-tag">${tag}</div>
-                    </div>
-                    <div class="rank-wins">${p.wins || 0} 🏆</div>
-                </div>
-            `;
+            html += rankUserCard(p, pos, isKing, isQueen, frameClass, `${pos}`);
         });
         list.innerHTML = html;
     } catch(e) {
@@ -1879,10 +2754,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const wallInput = $('wallInput');
     if (wallInput) {
         wallInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                postToWall();
-            }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); postToWall(); }
         });
         wallInput.addEventListener('input', () => {
             wallInput.style.height = 'auto';
