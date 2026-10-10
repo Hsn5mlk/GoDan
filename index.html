@@ -64,6 +64,26 @@ body {
     50% { transform: translate(30px,-30px) scale(1.2); opacity: 0.4; }
 }
 
+/* ============ IFRAME FULLSCREEN ============ */
+#iframeContainer {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: #0a0a0f;
+    display: none;
+}
+#iframeContainer.active { display: block; }
+#iframeContainer iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: #0a0a0f;
+    display: none;
+}
+#iframeContainer iframe.active { display: block; }
+
 /* ============ AUTH SCREEN ============ */
 .auth-screen {
     position: fixed; inset: 0; z-index: 9999;
@@ -250,48 +270,145 @@ body {
 }
 .mini-rect.rooms i { font-size: 18px; }
 .mini-rect.rooms:hover { background: linear-gradient(135deg, var(--blue), #2980b9); color: #fff; box-shadow: 0 8px 25px rgba(52,152,219,.8); transform: translateY(-3px); }
-.play-ring-btn {
-    background: linear-gradient(135deg, #2ecc71, #27ae60, #16a085);
-    border: 3px solid rgba(255,255,255,.3);
-    border-radius: 50%; width: 90px; height: 90px;
-    margin: 0 auto; color: #fff; cursor: pointer;
-    transition: all .3s cubic-bezier(.34,1.56,.64,1);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-decoration: none; position: relative;
+
+/* ============ DOUBLE CARD PLAY BUTTON ============ */
+.play-cards-container {
+    position: relative;
+    width: 100%;
+    height: 110px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
     transform: translateY(-25px);
-    box-shadow: 0 8px 30px rgba(46,204,113,.6), 0 0 40px rgba(46,204,113,.3),
-                inset 0 4px 8px rgba(255,255,255,.2), inset 0 -4px 8px rgba(0,0,0,.3);
 }
-.play-ring-btn::before {
-    content: '💍'; position: absolute;
-    top: -12px; left: 50%;
+.play-cards-container .play-ring-deco {
+    position: absolute;
+    top: -18px;
+    left: 50%;
     transform: translateX(-50%);
     font-size: 26px;
     filter: drop-shadow(0 0 12px rgba(255,215,0,.9));
     animation: ringFloat 2s ease-in-out infinite;
-    z-index: 3;
+    z-index: 20;
+    pointer-events: none;
 }
 @keyframes ringFloat {
     0%,100% { transform: translateX(-50%) translateY(0) rotate(-8deg); }
     50% { transform: translateX(-50%) translateY(-6px) rotate(8deg); }
 }
-.play-ring-btn::after {
-    content: ''; position: absolute;
-    inset: -6px; border-radius: 50%;
-    border: 3px dashed rgba(255,215,0,.7);
-    animation: ringRotate 8s linear infinite;
+
+.play-card {
+    position: absolute;
+    bottom: 0;
+    width: 68px;
+    height: 88px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .35s cubic-bezier(.34,1.56,.64,1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    text-decoration: none;
+    color: #fff;
+    overflow: hidden;
+    border: 2.5px solid rgba(255,255,255,.35);
+    box-shadow: 0 8px 25px rgba(0,0,0,.6), inset 0 2px 4px rgba(255,255,255,.15);
+    z-index: 10;
+}
+.play-card.card-1 {
+    background: linear-gradient(135deg, #2ecc71, #27ae60, #16a085);
+    transform: rotate(-12deg) translateX(-25px);
+    z-index: 11;
+    box-shadow: -4px 8px 25px rgba(46,204,113,.5), 0 8px 25px rgba(0,0,0,.6), inset 0 2px 4px rgba(255,255,255,.15);
+}
+.play-card.card-2 {
+    background: linear-gradient(135deg, #ff6b35, #ff2e63, #c0392b);
+    transform: rotate(12deg) translateX(25px);
+    z-index: 12;
+    box-shadow: 4px 8px 25px rgba(255,107,53,.5), 0 8px 25px rgba(0,0,0,.6), inset 0 2px 4px rgba(255,255,255,.15);
+}
+.play-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    background: rgba(255,255,255,.25);
+    border-radius: 50%;
+    box-shadow: inset 0 0 8px rgba(0,0,0,.3);
     pointer-events: none;
 }
-@keyframes ringRotate { to { transform: rotate(360deg); } }
-.play-ring-btn i {
-    font-size: 30px;
+.play-card.card-1::before {
+    right: 0;
+    border-top-right-radius: 12px;
+    border-bottom-left-radius: 0;
+    background: linear-gradient(225deg, rgba(255,255,255,.5) 0%, rgba(255,255,255,.1) 50%, transparent 50%);
+    box-shadow: -2px 2px 4px rgba(0,0,0,.2);
+}
+.play-card.card-2::before {
+    left: 0;
+    border-top-left-radius: 12px;
+    background: linear-gradient(135deg, rgba(255,255,255,.5) 0%, rgba(255,255,255,.1) 50%, transparent 50%);
+    box-shadow: 2px 2px 4px rgba(0,0,0,.2);
+}
+.play-card i {
+    font-size: 26px;
     filter: drop-shadow(0 2px 6px rgba(0,0,0,.5));
     animation: playPulse 1.5s ease-in-out infinite;
 }
-.play-ring-btn span { font-size: 11px; font-weight: 900; margin-top: 2px; text-shadow: 0 2px 6px rgba(0,0,0,.6); }
-@keyframes playPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
-.play-ring-btn:hover { transform: translateY(-30px) scale(1.05); box-shadow: 0 15px 45px rgba(46,204,113,.9), 0 0 60px rgba(46,204,113,.5), inset 0 4px 8px rgba(255,255,255,.3), inset 0 -4px 8px rgba(0,0,0,.3); }
+.play-card span {
+    font-size: 10px;
+    font-weight: 900;
+    text-shadow: 0 2px 6px rgba(0,0,0,.6);
+    letter-spacing: .5px;
+}
+@keyframes playPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+
+.play-card.card-1:hover {
+    transform: rotate(-18deg) translateX(-35px) translateY(-10px) scale(1.08);
+    box-shadow: -8px 15px 35px rgba(46,204,113,.9), 0 0 50px rgba(46,204,113,.5);
+    z-index: 20;
+}
+.play-card.card-2:hover {
+    transform: rotate(18deg) translateX(35px) translateY(-10px) scale(1.08);
+    box-shadow: 8px 15px 35px rgba(255,107,53,.9), 0 0 50px rgba(255,107,53,.5);
+    z-index: 20;
+}
+.play-card:active {
+    transform: scale(0.95) !important;
+}
+.play-cards-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border: 2.5px dashed rgba(255,215,0,.5);
+    border-radius: 50%;
+    animation: ringRotate 10s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+@keyframes ringRotate { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+.play-cards-container::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 60px;
+    background: radial-gradient(ellipse at center, rgba(46,204,113,.4), transparent 70%);
+    filter: blur(15px);
+    pointer-events: none;
+    z-index: 0;
+}
 
 /* ============ WALL MODAL ============ */
 .wall-modal { position: fixed; inset: 0; background: rgba(0,0,0,.85); backdrop-filter: blur(8px); display: none; z-index: 1000; }
@@ -952,14 +1069,22 @@ body {
 
 @media (max-width: 500px) {
     .wall-panel { width: 90%; }
-    .play-ring-btn { width: 82px; height: 82px; }
-    .play-ring-btn i { font-size: 26px; }
-    .play-ring-btn span { font-size: 10px; }
-    .play-ring-btn::before { font-size: 22px; }
+    .play-card { width: 58px; height: 76px; }
+    .play-card i { font-size: 22px; }
+    .play-card span { font-size: 9px; }
+    .play-card.card-1 { transform: rotate(-12deg) translateX(-22px); }
+    .play-card.card-2 { transform: rotate(12deg) translateX(22px); }
+    .play-cards-container { height: 95px; }
+    .play-cards-container::after { width: 100px; height: 100px; }
     .mini-rect { padding: 6px 10px; font-size: 10px; }
     .mini-rect i { font-size: 13px; }
     .podium-item .rank-avatar { width: 50px; height: 50px; font-size: 20px; }
     .podium-item .podium-name { font-size: 10px; max-width: 90px; }
+}
+    .play-ring-deco img {
+    width: 50px;   /* غيّر الحجم حسب حاجتك */
+    height: 50px;
+    object-fit: contain;
 }
 </style>
 </head>
@@ -969,6 +1094,13 @@ body {
 <div class="bg-overlay"></div>
 <div class="light-effect one"></div>
 <div class="light-effect two"></div>
+
+<!-- IFRAME FULLSCREEN -->
+<div id="iframeContainer">
+    <iframe id="iframeGame1" src="about:blank" allow="autoplay; fullscreen; microphone; camera"></iframe>
+    <iframe id="iframeGame2" src="about:blank" allow="autoplay; fullscreen; microphone; camera"></iframe>
+    <iframe id="iframeRooms" src="about:blank" allow="autoplay; fullscreen; microphone; camera"></iframe>
+</div>
 
 <!-- AUTH SCREEN -->
 <div class="auth-screen" id="authScreen">
@@ -1030,10 +1162,23 @@ body {
             <i class="bi bi-bell-fill"></i>
         </span>
     </button>
-    <a class="play-ring-btn" id="playMainBtn" href="#" target="_blank">
-        <i class="bi bi-play-fill"></i><span>العب</span>
-    </a>
-    <a class="mini-rect rooms" id="roomsBtn" href="#" target="_blank">
+
+    <!-- زر العب - ورقتان ملتفة -->
+    <div class="play-cards-container">
+        <div class="play-ring-deco">
+    <img src="https://iili.io/nMqxnK7.png" alt="خاتم">
+</div>
+        <a class="play-card card-1" onclick="openGame('game1'); return false;" href="javascript:void(0)" title="محيبس">
+            <i class="bi bi-play-fill"></i>
+            <span>محيبس</span>
+        </a>
+        <a class="play-card card-2" onclick="openGame('game2'); return false;" href="javascript:void(0)" title="حرب">
+            <i class="bi bi-swords"></i>
+            <span>حرب</span>
+        </a>
+    </div>
+
+    <a class="mini-rect rooms" id="roomsBtn" href="javascript:void(0)" onclick="openGame('rooms'); return false;">
         <i class="bi bi-door-open-fill"></i><span>الغرف</span>
     </a>
 </div>
@@ -1295,7 +1440,8 @@ const db = getFirestore(app);
 
 const KING_EMAIL = 'hd5@5.com';
 const QUEEN_EMAIL = 'dh5@5.com';
-const PLAY_URL = 'https://hsn5mlk.github.io/Startdan/';
+const PLAY_URL_1 = 'https://hsn5mlk.github.io/Startdan/';
+const PLAY_URL_2 = 'https://hsn5mlk.github.io/Harbdan/';
 const ROOMS_URL = 'https://hsn5mlk.github.io/Roomdan/';
 const MAX_WALL_MESSAGES = 30;
 
@@ -1306,10 +1452,13 @@ let BG_IMAGES = [
 ];
 const BG_INTERVAL = 8000;
 
+// ✅ قائمة الموسيقى - تتناوب تلقائياً
 let MUSIC_LIST = [
-    { id: 'default_1', title: 'الموسيقى الافتراضية', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' }
+    { id: 'default_1', title: 'الموسيقى 1', url: 'https://cdn.imageurlgenerator.com/uploads/e4236156-18f7-482c-8b1f-d20178a104fd.mp3' },
+    { id: 'default_2', title: 'الموسيقى 2', url: 'https://cdn.imageurlgenerator.com/uploads/2fce2154-7579-408f-86c6-f1ccdb8741e5.mp3' }
 ];
 let currentMusicId = 'default_1';
+let currentMusicIndex = 0;
 
 const COLOR_PALETTE = ['#ffffff','#ffd700','#ff6b35','#ff2e63','#2ecc71','#3498db','#9b59b6','#1abc9c','#e74c3c','#f39c12','#ecf0f1','#95a5a6','#34495e','#16a085','#c0392b','#8e44ad'];
 const PROFILE_BACKGROUNDS = [
@@ -1367,7 +1516,58 @@ let royalAdUnsubscribe = null;
 let currentAdId = null;
 let musicListener = null;
 
+let iframeActive = false;
+let bgMusicWasPlaying = false;
+
 function $(id) { return document.getElementById(id); }
+
+// ============ IFRAME NAVIGATION (بسيط - زر الرجوع طبيعي) ============
+window.openGame = function(gameKey) {
+    let url, iframeEl;
+    if (gameKey === 'game1') { url = PLAY_URL_1; iframeEl = $('iframeGame1'); }
+    else if (gameKey === 'game2') { url = PLAY_URL_2; iframeEl = $('iframeGame2'); }
+    else if (gameKey === 'rooms') { url = ROOMS_URL; iframeEl = $('iframeRooms'); }
+    else return;
+
+    const container = $('iframeContainer');
+    const allIframes = container.querySelectorAll('iframe');
+    allIframes.forEach(f => f.classList.remove('active'));
+
+    // تحميل الصفحة مرة واحدة فقط
+    if (!iframeEl.src || iframeEl.src === 'about:blank') {
+        iframeEl.src = url;
+    }
+
+    iframeEl.classList.add('active');
+    container.classList.add('active');
+    iframeActive = true;
+
+    // ✅ إضافة حالة واحدة فقط في التاريخ لدعم زر الرجوع
+    history.pushState({ iframe: true }, '');
+
+    // إيقاف الموسيقى أثناء اللعب
+    if (bgMusicAudio && !bgMusicAudio.paused) {
+        bgMusicAudio.pause();
+        bgMusicWasPlaying = true;
+    }
+};
+
+// ✅ إغلاق الـ iframe (يُستدعى من زر الرجوع)
+window.closeIframe = function() {
+    const container = $('iframeContainer');
+    if (!container.classList.contains('active')) return;
+    container.classList.remove('active');
+    iframeActive = false;
+    if (bgMusicAudio && bgMusicWasPlaying) {
+        bgMusicAudio.play().catch(() => {});
+        bgMusicWasPlaying = false;
+    }
+};
+
+// ✅ زر الرجوع الطبيعي في الموبايل
+window.addEventListener('popstate', () => {
+    if (iframeActive) closeIframe();
+});
 
 function showToast(icon, msg) {
     const t = $('toast');
@@ -1481,30 +1681,27 @@ function initBackground() {
     }, BG_INTERVAL);
 }
 
-// ============ MUSIC ============
+// ============ MUSIC (Playlist تلقائي) ============
 let bgMusicAudio = null;
-let musicStateListener = null;
 
 function getBgMusicAudio() {
-    if (!bgMusicAudio) {
-        bgMusicAudio = document.getElementById('bgMusic');
-    }
+    if (!bgMusicAudio) bgMusicAudio = document.getElementById('bgMusic');
     return bgMusicAudio;
 }
 
-function playMusicById(musicId) {
-    const music = MUSIC_LIST.find(m => m.id === musicId);
-    if (!music) return false;
+// ✅ تشغيل المقطع التالي تلقائياً
+function playNextMusic() {
+    if (MUSIC_LIST.length === 0) return;
+    currentMusicIndex = (currentMusicIndex + 1) % MUSIC_LIST.length;
+    const nextMusic = MUSIC_LIST[currentMusicIndex];
     const audio = getBgMusicAudio();
-    if (!audio) return false;
-    audio.src = music.url;
-    audio.volume = 0.35;
+    if (!audio) return;
+    audio.src = nextMusic.url;
     audio.play().then(() => {
         bgMusicStarted = true;
-        currentMusicId = musicId;
-        return true;
-    }).catch(() => false);
-    return true;
+        currentMusicId = nextMusic.id;
+        if ($('profileFullModal')?.classList.contains('active')) renderMusicManager();
+    }).catch(() => {});
 }
 
 function initMusic() {
@@ -1512,16 +1709,20 @@ function initMusic() {
     if (audio) audio.remove();
     audio = document.createElement('audio');
     audio.id = 'bgMusic';
-    audio.loop = true;
     audio.preload = 'auto';
     audio.volume = 0.35;
+    audio.loop = false; // ✅ لا تكرار - عشان ينتقل للتالي
     document.body.appendChild(audio);
     bgMusicAudio = audio;
     
-    // تشغيل الموسيقى النشطة
+    // ✅ عند انتهاء المقطع → شغّل التالي
+    audio.addEventListener('ended', playNextMusic);
+    
     const activeMusic = MUSIC_LIST.find(m => m.id === currentMusicId) || MUSIC_LIST[0];
     if (activeMusic) {
         audio.src = activeMusic.url;
+        currentMusicIndex = MUSIC_LIST.findIndex(m => m.id === activeMusic.id);
+        if (currentMusicIndex < 0) currentMusicIndex = 0;
     }
     
     const tryPlay = async () => {
@@ -1538,25 +1739,21 @@ function listenForMusic() {
     musicListener = onSnapshot(doc(db, 'm7basSettings', 'music'), (snap) => {
         if (!snap.exists()) return;
         const data = snap.data();
-        if (data.list && data.list.length > 0) {
-            MUSIC_LIST = data.list;
-        }
-        if (data.currentId) {
-            if (currentMusicId !== data.currentId) {
-                currentMusicId = data.currentId;
-                const music = MUSIC_LIST.find(m => m.id === currentMusicId);
-                if (music) {
-                    const audio = getBgMusicAudio();
-                    if (audio) {
-                        audio.src = music.url;
-                        audio.play().then(() => { bgMusicStarted = true; }).catch(() => {});
-                    }
+        if (data.list && data.list.length > 0) MUSIC_LIST = data.list;
+        if (data.currentId && currentMusicId !== data.currentId) {
+            currentMusicId = data.currentId;
+            const music = MUSIC_LIST.find(m => m.id === currentMusicId);
+            if (music) {
+                const audio = getBgMusicAudio();
+                if (audio) {
+                    audio.src = music.url;
+                    currentMusicIndex = MUSIC_LIST.findIndex(m => m.id === currentMusicId);
+                    if (currentMusicIndex < 0) currentMusicIndex = 0;
+                    audio.play().then(() => { bgMusicStarted = true; }).catch(() => {});
                 }
             }
         }
-        if ($('profileFullModal').classList.contains('active')) {
-            renderMusicManager();
-        }
+        if ($('profileFullModal').classList.contains('active')) renderMusicManager();
     });
 }
 
@@ -1567,22 +1764,19 @@ function renderMusicManager() {
         list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:11px;">لا توجد مقاطع موسيقية</div>';
         return;
     }
-    list.innerHTML = MUSIC_LIST.map(m => {
+    list.innerHTML = MUSIC_LIST.map((m, idx) => {
         const isPlaying = m.id === currentMusicId && bgMusicStarted;
         return `<div class="music-item ${isPlaying ? 'playing' : ''}">
-            <div class="music-icon">
-                <i class="bi bi-${isPlaying ? 'music-note-beamed' : 'music-note'}"></i>
-            </div>
+            <div class="music-icon"><i class="bi bi-${isPlaying ? 'music-note-beamed' : 'music-note'}"></i></div>
             <div class="music-info">
-                <div class="music-title">${m.title || 'بدون عنوان'} ${isPlaying ? '🎵' : ''}</div>
+                <div class="music-title">${m.title || 'بدون عنوان'} ${isPlaying ? '🎵' : ''} <span style="font-size:9px;color:var(--text3);">(${idx + 1}/${MUSIC_LIST.length})</span></div>
                 <div class="music-url">${m.url}</div>
             </div>
             <div class="music-actions">
                 ${isPlaying 
-                    ? `<button class="music-btn stop" onclick="stopMusicById('${m.id}')" title="إيقاف"><i class="bi bi-pause-fill"></i></button>`
-                    : `<button class="music-btn play" onclick="playMusicById('${m.id}')" title="تشغيل"><i class="bi bi-play-fill"></i></button>`
-                }
-                <button class="music-btn del" onclick="deleteMusicById('${m.id}')" title="حذف"><i class="bi bi-trash-fill"></i></button>
+                    ? `<button class="music-btn stop" onclick="stopMusicById('${m.id}')"><i class="bi bi-pause-fill"></i></button>`
+                    : `<button class="music-btn play" onclick="playMusicById('${m.id}')"><i class="bi bi-play-fill"></i></button>`}
+                <button class="music-btn del" onclick="deleteMusicById('${m.id}')"><i class="bi bi-trash-fill"></i></button>
             </div>
         </div>`;
     }).join('');
@@ -1599,15 +1793,12 @@ window.playMusicById = async function(musicId) {
         await audio.play();
         bgMusicStarted = true;
         currentMusicId = musicId;
-        // حفظ الحالة في Firestore
-        try {
-            await setDoc(doc(db, 'm7basSettings', 'music'), { currentId: musicId }, { merge: true });
-        } catch(e) {}
+        currentMusicIndex = MUSIC_LIST.findIndex(m => m.id === musicId);
+        if (currentMusicIndex < 0) currentMusicIndex = 0;
+        try { await setDoc(doc(db, 'm7basSettings', 'music'), { currentId: musicId }, { merge: true }); } catch(e) {}
         renderMusicManager();
         showToast('🎵', 'تم تشغيل: ' + (music.title || 'المقطع'));
-    } catch(e) {
-        showToast('❌', 'فشل التشغيل');
-    }
+    } catch(e) { showToast('❌', 'فشل التشغيل'); }
 };
 
 window.stopMusicById = async function(musicId) {
@@ -1628,19 +1819,17 @@ window.deleteMusicById = async function(musicId) {
         let newCurrentId = currentMusicId;
         if (currentMusicId === musicId) {
             newCurrentId = newList[0].id;
-            // تشغيل المقطع الجديد
             const audio = getBgMusicAudio();
             if (audio) {
                 audio.src = newList[0].url;
                 audio.play().then(() => { bgMusicStarted = true; }).catch(() => {});
             }
         }
-        await setDoc(doc(db, 'm7basSettings', 'music'), { 
-            list: newList, 
-            currentId: newCurrentId 
-        }, { merge: true });
+        await setDoc(doc(db, 'm7basSettings', 'music'), { list: newList, currentId: newCurrentId }, { merge: true });
         MUSIC_LIST = newList;
         currentMusicId = newCurrentId;
+        currentMusicIndex = MUSIC_LIST.findIndex(m => m.id === newCurrentId);
+        if (currentMusicIndex < 0) currentMusicIndex = 0;
         renderMusicManager();
         showToast('🗑️', 'تم الحذف');
     } catch(e) { showToast('❌', 'فشل الحذف'); }
@@ -1831,8 +2020,7 @@ async function loadMyWins() {
 // ============ ROYAL BACKGROUNDS ============
 async function loadRoyalBackgrounds() {
     try {
-        const docRef = doc(db, 'm7basSettings', 'backgrounds');
-        const d = await getDoc(docRef);
+        const d = await getDoc(doc(db, 'm7basSettings', 'backgrounds'));
         if (d.exists() && d.data().images && d.data().images.length > 0) {
             BG_IMAGES = d.data().images;
             initBackground();
@@ -1843,18 +2031,20 @@ async function loadRoyalBackgrounds() {
 // ============ ROYAL MUSIC ============
 async function loadRoyalMusic() {
     try {
-        const docRef = doc(db, 'm7basSettings', 'music');
-        const d = await getDoc(docRef);
+        const d = await getDoc(doc(db, 'm7basSettings', 'music'));
         if (d.exists()) {
             const data = d.data();
             if (data.list && data.list.length > 0) MUSIC_LIST = data.list;
             if (data.currentId) currentMusicId = data.currentId;
         }
-        // تحديث audio
         const audio = getBgMusicAudio();
         if (audio) {
             const music = MUSIC_LIST.find(m => m.id === currentMusicId) || MUSIC_LIST[0];
-            if (music) audio.src = music.url;
+            if (music) {
+                audio.src = music.url;
+                currentMusicIndex = MUSIC_LIST.findIndex(m => m.id === music.id);
+                if (currentMusicIndex < 0) currentMusicIndex = 0;
+            }
         }
     } catch(e) {}
 }
@@ -1945,6 +2135,7 @@ window.openMyProfile = async function(startTab = 'info') {
     $('pfName').textContent = myUserData.name || currentUser.displayName || 'مستخدم';
     $('pfName').style.color = myUserData.nameColor || '#fff';
     $('pfEmail').textContent = currentUser.email || '';
+    $('pfEmail').style.display = '';
     $('pfBio').textContent = myUserData.bio || 'لا توجد سيرة ذاتية';
     $('pfBio').style.color = myUserData.textColor || '';
     $('pfHeader').style.background = myUserData.profileBg 
@@ -1993,7 +2184,7 @@ window.openMyProfile = async function(startTab = 'info') {
     $('profileFullModal').classList.add('active');
 };
 
-// ============ VIEW OTHER USER PROFILE (بدون بريد) ============
+// ============ VIEW OTHER USER PROFILE ============
 window.showOtherProfile = async function(uid) {
     if (!uid || !currentUser) return;
     if (uid === currentUser.uid) { openMyProfile(); return; }
@@ -2016,14 +2207,7 @@ window.showOtherProfile = async function(uid) {
             const lb = await getDoc(doc(db, 'm7basLeaderboard', uid));
             if (lb.exists()) {
                 const lbData = lb.data();
-                d = {
-                    name: lbData.name || 'مستخدم',
-                    avatar: lbData.avatar || '',
-                    bio: '',
-                    nameColor: '#fff',
-                    textColor: '',
-                    profileBg: ''
-                };
+                d = { name: lbData.name || 'مستخدم', avatar: lbData.avatar || '', bio: '', nameColor: '#fff', textColor: '', profileBg: '' };
             }
         }
     } catch(e) { console.error('showOtherProfile error:', e); }
@@ -2050,7 +2234,6 @@ window.showOtherProfile = async function(uid) {
     
     $('pfName').textContent = name;
     $('pfName').style.color = nameColor;
-    // ✅ إخفاء البريد الإلكتروني للأعضاء الآخرين (خصوصية)
     $('pfEmail').textContent = '';
     $('pfEmail').style.display = 'none';
     $('pfBio').textContent = bio || 'لا توجد سيرة ذاتية';
@@ -2157,7 +2340,7 @@ function renderBgManager() {
     }
     grid.innerHTML = BG_IMAGES.map((url, idx) => `
         <div class="bg-manager-item" style="background-image:url('${url}')">
-            <button class="bg-del-btn" onclick="deleteBgImage(${idx})" title="حذف"><i class="bi bi-trash-fill"></i></button>
+            <button class="bg-del-btn" onclick="deleteBgImage(${idx})"><i class="bi bi-trash-fill"></i></button>
             ${idx === currentBgIndex ? '<span class="bg-active-badge">الحالية</span>' : ''}
         </div>
     `).join('');
@@ -2227,16 +2410,12 @@ $('saveStyleBtn').addEventListener('click', async () => {
     const bgToSave = customBg || selectedProfileBg;
     try {
         await setDoc(doc(db, 'users', currentUser.uid), {
-            nameColor: selectedNameColor,
-            textColor: selectedTextColor,
-            profileBg: bgToSave,
-            animatedFont: selectedAnimatedFont
+            nameColor: selectedNameColor, textColor: selectedTextColor,
+            profileBg: bgToSave, animatedFont: selectedAnimatedFont
         }, { merge: true });
         Object.assign(myUserData, {
-            nameColor: selectedNameColor,
-            textColor: selectedTextColor,
-            profileBg: bgToSave,
-            animatedFont: selectedAnimatedFont
+            nameColor: selectedNameColor, textColor: selectedTextColor,
+            profileBg: bgToSave, animatedFont: selectedAnimatedFont
         });
         showToast('🎨', 'تم حفظ المظهر');
     } catch(e) { showToast('❌', 'فشل الحفظ'); }
@@ -2337,16 +2516,11 @@ $('publishRoyalAdBtn').addEventListener('click', async () => {
     const adId = Date.now().toString();
     try {
         await setDoc(doc(db, 'm7basSettings', 'royalAd'), {
-            id: adId,
-            title,
+            id: adId, title,
             subtitle: isRoyal ? 'من صاحب المملكة' : '',
-            description,
-            imageUrl: imageUrl || '',
-            linkUrl: linkUrl || '',
-            footer: '— إعلان رسمي —',
-            active: true,
-            createdBy: currentUser.uid,
-            createdAt: serverTimestamp()
+            description, imageUrl: imageUrl || '', linkUrl: linkUrl || '',
+            footer: '— إعلان رسمي —', active: true,
+            createdBy: currentUser.uid, createdAt: serverTimestamp()
         });
         $('royalComposerOverlay').classList.remove('active');
         showToast('👑', 'تم نشر الإعلان للجميع');
@@ -2746,8 +2920,6 @@ document.querySelector('.wall-modal').addEventListener('click', (e) => {
 
 // ============ INIT ============
 document.addEventListener('DOMContentLoaded', () => {
-    $('playMainBtn').href = PLAY_URL;
-    $('roomsBtn').href = ROOMS_URL;
     initBackground();
     initMusic();
     
